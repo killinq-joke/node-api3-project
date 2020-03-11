@@ -17,9 +17,9 @@ router.post('/', (req, res) => {
 });
 
 // check this back
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, (req, res) => {
   // do your magic!
-  const {id} = req.params;
+  const {id} = req.user;
   const post = req.body;
   post.user_id = id;
   postsHelper.insert(post)
@@ -42,9 +42,9 @@ router.get('/', (req, res) => {
   })
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   // do your magic!
-  const {id} = req.params;
+  const {id} = req.user;
   helpers.getById(id)
   .then(response => {
     res.status(200).json(response)
@@ -54,9 +54,9 @@ router.get('/:id', (req, res) => {
   })
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   // do your magic!
-  const {id} = req.params;
+  const {id} = req.user;
   helpers.getUserPosts(id)
   .then(response => {
     res.status(200).json(response)
@@ -66,9 +66,9 @@ router.get('/:id/posts', (req, res) => {
   })
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   // do your magic!
-  const {id} = req.params;
+  const {id} = req.user;
   helpers.remove(id)
   .then(response => {
     res.status(200).json({ message: "deleted" })
@@ -78,9 +78,9 @@ router.delete('/:id', (req, res) => {
   })
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, (req, res) => {
   // do your magic!
-  const {id} = req.params;
+  const {id} = req.user;
   const change = req.body;
 
   helpers.update(id, change)
@@ -96,6 +96,12 @@ router.put('/:id', (req, res) => {
 
 function validateUserId(req, res, next) {
   // do your magic!
+  if (isNaN(req.params.id)) {
+    res.status(400).json({ message: "invalid user id"})
+  } else {
+    req.user = req.params;
+    next()
+  }
 }
 
 function validateUser(req, res, next) {
