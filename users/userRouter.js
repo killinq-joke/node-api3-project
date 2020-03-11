@@ -4,7 +4,7 @@ const postsHelper = require("../posts/postDb");
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
+router.post('/', validateUser, (req, res) => {
   // do your magic!
   const user = req.body;
   helpers.insert(user)
@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
 });
 
 // check this back
-router.post('/:id/posts', validateUserId, (req, res) => {
+router.post('/:id/posts', validateUserId, validateUser, (req, res) => {
   // do your magic!
   const {id} = req.user;
   const post = req.body;
@@ -78,7 +78,7 @@ router.delete('/:id', validateUserId, (req, res) => {
   })
 });
 
-router.put('/:id', validateUserId, (req, res) => {
+router.put('/:id', validateUserId, validateUser, (req, res) => {
   // do your magic!
   const {id} = req.user;
   const change = req.body;
@@ -106,6 +106,14 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   // do your magic!
+  if (Object.keys(req.body).length === 0 && req.body.constructor === Object) {
+    res.status(400).json({ message: "missing user data" })
+  } else if (!req.body.name) {
+    res.status(400).json({ message: "missing required name field" })
+  } else {
+    next()
+  }
+
 }
 
 function validatePost(req, res, next) {
