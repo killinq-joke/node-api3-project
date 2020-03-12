@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 
 router.get("/:id", validatePostId, (req, res) => {
   // do your magic!
-  const { id } = req.params;
+  const { id } = req.post;
 
   helpers
     .getById(id)
@@ -31,7 +31,7 @@ router.get("/:id", validatePostId, (req, res) => {
 
 router.delete("/:id", validatePostId, (req, res) => {
   // do your magic!
-  const { id } = req.params;
+  const { id } = req.post;
 
   helpers
     .remove(id)
@@ -45,7 +45,7 @@ router.delete("/:id", validatePostId, (req, res) => {
 
 router.put("/:id", validatePostId, (req, res) => {
   // do your magic!
-  const { id } = req.params;
+  const { id } = req.post;
   const change = req.body;
 
   helpers
