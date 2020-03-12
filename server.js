@@ -1,4 +1,4 @@
-
+const path = require("path");
 const cors = require("cors");
 const express = require("express");
 const helmet = require("helmet");
@@ -7,25 +7,15 @@ const postsRouter = require("./posts/postRouter");
 const server = express();
 
 server.use(express.json());
+server.use(express.static(path.join(__dirname, "client/build")))
 server.use(helmet());
 server.use(cors());
 server.use("/users", usersRouter);
 server.use("/posts", postsRouter);
 
-server.get("/friend", (req, res) => {
-  res.send(`<h2>Hello, friend!</h2>`);
-});
-
-server.get("/:id", (req, res) => {
-  res.send(`<h2>That is a nice ${req.params.id}</h2>`);
-});
-
-const users = [];
-
-server.post("/users", logger, (req, res) => {
-  users.push({ name: req.cleanName, age: req.cleanAge });
-  res.status(201).json(users);
-});
+server.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.js"))
+})
 
 //custom middleware
 
